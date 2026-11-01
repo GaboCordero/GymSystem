@@ -52,10 +52,23 @@ CREATE TABLE IF NOT EXISTS usuario_rol (
     FOREIGN KEY (id_rol) REFERENCES rol(id_rol)
 ) ENGINE = InnoDB;
 
+-- Tabla de clientes
+CREATE TABLE IF NOT EXISTS cliente (
+    id_cliente INT NOT NULL AUTO_INCREMENT,
+    id_usuario INT NOT NULL,
+    fecha_registro DATE NOT NULL,
+    observaciones VARCHAR(255),
+    PRIMARY KEY (id_cliente),
+    UNIQUE KEY uk_cliente_usuario (id_usuario),
+    CONSTRAINT fk_cliente_usuario
+        FOREIGN KEY (id_usuario)
+        REFERENCES usuario(id_usuario)
+) ENGINE=InnoDB;
+
+
 -- Inserción de roles
-INSERT INTO rol (rol) VALUES
+INSERT IGNORE INTO rol (rol) VALUES
 ('SUPERADMIN'),
 ('ADMIN'),
 ('ENTRENADOR'),
-('CLIENTE')
-ON DUPLICATE KEY UPDATE rol = VALUES(rol);
+('CLIENTE');

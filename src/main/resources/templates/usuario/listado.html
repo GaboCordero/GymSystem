@@ -21,13 +21,23 @@
 
         <main class="container py-5">
 
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>Gestión de usuarios</h2>
 
-                <a th:href="@{/usuario/nuevo}" class="btn btn-primary">
-                    Registrar usuario
-                </a>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">Gestión de usuarios</h2>
+
+                <div class="d-flex gap-2">
+                    <a th:href="@{/usuario/nuevo}" class="btn btn-primary">
+                        Registrar usuario
+                    </a>
+
+                    <a th:unless="${superadmin}"
+                       th:href="@{/cliente/listado}"
+                       class="btn btn-outline-primary">
+                        Gestión de clientes
+                    </a>
+                </div>
             </div>
+
 
             <div th:if="${mensaje}" class="alert alert-success"
                  th:text="${mensaje}"></div>
