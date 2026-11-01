@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Registrar cliente - GymSystem</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+    <body class="bg-light">
+
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" th:href="@{/cliente/listado}">GymSystem</a>
+
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="btn btn-outline-light btn-sm">
+                        Cerrar sesión
+                    </button>
+                </form>
+            </div>
+        </nav>
+
+        <main class="container py-5">
+
+            <div class="card shadow-sm mx-auto" style="max-width: 700px;">
+                <div class="card-body p-4">
+
+                    <h3 class="mb-3">Registrar cliente</h3>
+
+                    <p class="text-muted">
+                        Seleccione una cuenta con rol CLIENTE que todavía no esté
+                        registrada como cliente del gimnasio.
+                    </p>
+
+                    <div class="alert alert-info">
+                        Si la persona todavía no tiene una cuenta, primero debe
+                        registrarla desde Gestión de usuarios.
+                    </div>
+
+                    <div th:if="${error}" class="alert alert-danger"
+                         th:text="${error}"></div>
+
+                    <form th:action="@{/cliente/guardar}" method="post">
+
+                        <div class="mb-3">
+                            <label class="form-label">Usuario</label>
+
+                            <div th:if="${#lists.isEmpty(usuarios)}"
+                                 class="alert alert-warning">
+                                No hay usuarios disponibles para registrar como clientes.
+                            </div>
+
+                            <select name="idUsuario" class="form-select" required>
+                                <option value="">Seleccione un usuario</option>
+
+                                <option th:each="usuario : ${usuarios}"
+                                        th:value="${usuario.idUsuario}"
+                                        th:text="${usuario.nombre + ' ' + usuario.apellidos + ' (' + usuario.username + ')'}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Observaciones</label>
+
+                            <textarea name="observaciones"
+                                      class="form-control"
+                                      rows="3"
+                                      maxlength="255"></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a th:href="@{/usuario/nuevo}"
+                               class="btn btn-outline-primary me-auto">
+                                Crear usuario
+                            </a>
+                            <a th:href="@{/cliente/listado}"
+                               class="btn btn-secondary">
+                                Cancelar
+                            </a>
+
+                            <button type="submit" class="btn btn-primary"
+                                    th:disabled="${#lists.isEmpty(usuarios)}">
+                                Registrar cliente
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </main>
+    </body>
+</html>
