@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragmentos/menu :: head('Asignar membresía')}"></head>
+    <body class="bg-light">
+
+        <nav th:replace="~{fragmentos/menu :: menuAdmin}"></nav>
+
+        <main class="container py-5">
+
+            <div class="card shadow-sm mx-auto" style="max-width: 700px;">
+                <div class="card-body p-4">
+
+                    <h3 class="mb-3">Asignar membresía a un cliente</h3>
+
+                    <p class="text-muted">
+                        La membresía queda en estado PENDIENTE hasta que se registre
+                        el pago completo del plan.
+                    </p>
+
+                    <div th:replace="~{fragmentos/menu :: mensajes}"></div>
+
+                    <div th:if="${#lists.isEmpty(clientes)}" class="alert alert-warning">
+                        No hay clientes activos. Primero registre uno en Gestión de clientes.
+                    </div>
+
+                    <div th:if="${#lists.isEmpty(planes)}" class="alert alert-warning">
+                        No hay planes activos. Primero registre uno en Planes de membresía.
+                    </div>
+
+                    <form th:action="@{/membresia/guardar}" method="post">
+
+                        <div class="mb-3">
+                            <label class="form-label">Cliente *</label>
+                            <select name="idCliente" class="form-select" required>
+                                <option value="">Seleccione un cliente</option>
+                                <option th:each="cliente : ${clientes}"
+                                        th:value="${cliente.idCliente}"
+                                        th:selected="${cliente.idCliente == idClienteSeleccionado}"
+                                        th:text="${cliente.usuario.nombre + ' ' + cliente.usuario.apellidos + ' (' + cliente.usuario.username + ')'}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Plan *</label>
+                            <select name="idPlan" class="form-select" required>
+                                <option value="">Seleccione un plan</option>
+                                <option th:each="plan : ${planes}"
+                                        th:value="${plan.idPlan}"
+                                        th:text="${plan.nombre + ' - ' + plan.duracionDias + ' días - ₡' + #numbers.formatDecimal(plan.precio, 1, 'COMMA', 2, 'POINT')}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Fecha de inicio *</label>
+                            <input type="date" name="fechaInicio" class="form-control"
+                                   th:value="${hoy}" required>
+                            <div class="form-text">
+                                La fecha de fin se calcula con la duración del plan.
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a th:href="@{/membresia/listado}" class="btn btn-secondary">
+                                Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary"
+                                    th:disabled="${#lists.isEmpty(clientes) or #lists.isEmpty(planes)}">
+                                Asignar membresía
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </main>
+    </body>
+</html>

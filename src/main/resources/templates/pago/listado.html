@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragmentos/menu :: head('Pagos')}"></head>
+    <body class="bg-light">
+
+        <nav th:replace="~{fragmentos/menu :: menuAdmin}"></nav>
+
+        <main class="container py-5">
+
+            <h2 class="mb-4">Historial de pagos</h2>
+
+            <div th:replace="~{fragmentos/menu :: mensajes}"></div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Cliente</th>
+                                    <th>Plan</th>
+                                    <th>Monto</th>
+                                    <th>Método</th>
+                                    <th>Referencia</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="pago : ${pagos}">
+                                    <td th:text="${#temporals.format(pago.fechaPago, 'dd/MM/yyyy HH:mm')}"></td>
+                                    <td th:text="${pago.membresia.cliente.usuario.nombre + ' ' + pago.membresia.cliente.usuario.apellidos}"></td>
+                                    <td th:text="${pago.membresia.plan.nombre}"></td>
+                                    <td th:text="${'₡' + #numbers.formatDecimal(pago.monto, 1, 'COMMA', 2, 'POINT')}"></td>
+                                    <td th:text="${pago.metodoPago}"></td>
+                                    <td th:text="${pago.referencia}"></td>
+                                    <td>
+                                        <a th:href="@{/membresia/detalle/{id}(id=${pago.membresia.idMembresia})}"
+                                           class="btn btn-outline-primary btn-sm">
+                                            Ver membresía
+                                        </a>
+                                    </td>
+                                </tr>
+
+                                <tr th:if="${#lists.isEmpty(pagos)}">
+                                    <td colspan="7" class="text-center text-muted">
+                                        No hay pagos registrados.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </body>
+</html>

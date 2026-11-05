@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragmentos/menu :: head('Detalle de membresía')}"></head>
+    <body class="bg-light">
+
+        <nav th:replace="~{fragmentos/menu :: menuAdmin}"></nav>
+
+        <main class="container py-5">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">Detalle de membresía</h2>
+
+                <a th:href="@{/membresia/listado}" class="btn btn-outline-secondary">
+                    Volver a membresías
+                </a>
+            </div>
+
+            <div th:replace="~{fragmentos/menu :: mensajes}"></div>
+
+            <div class="row g-4">
+
+                <div class="col-lg-5">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">Membresía</h5>
+
+                            <dl class="row mb-0">
+                                <dt class="col-sm-5">Cliente</dt>
+                                <dd class="col-sm-7"
+                                    th:text="${membresia.cliente.usuario.nombre + ' ' + membresia.cliente.usuario.apellidos}"></dd>
+
+                                <dt class="col-sm-5">Plan</dt>
+                                <dd class="col-sm-7" th:text="${membresia.plan.nombre}"></dd>
+
+                                <dt class="col-sm-5">Vigencia</dt>
+                                <dd class="col-sm-7"
+                                    th:text="${#temporals.format(membresia.fechaInicio, 'dd/MM/yyyy') + ' al ' + #temporals.format(membresia.fechaFin, 'dd/MM/yyyy')}"></dd>
+
+                                <dt class="col-sm-5">Estado</dt>
+                                <dd class="col-sm-7">
+                                    <span class="badge"
+                                          th:classappend="${membresia.estado == 'ACTIVA'} ? 'bg-success' : (${membresia.estado == 'PENDIENTE'} ? 'bg-warning text-dark' : 'bg-secondary')"
+                                          th:text="${membresia.estado}">
+                                    </span>
+                                </dd>
+
+                                <dt class="col-sm-5">Precio</dt>
+                                <dd class="col-sm-7"
+                                    th:text="${'₡' + #numbers.formatDecimal(membresia.precio, 1, 'COMMA', 2, 'POINT')}"></dd>
+
+                                <dt class="col-sm-5">Pagado</dt>
+                                <dd class="col-sm-7"
+                                    th:text="${'₡' + #numbers.formatDecimal(totalPagado, 1, 'COMMA', 2, 'POINT')}"></dd>
+
+                                <dt class="col-sm-5">Saldo pendiente</dt>
+                                <dd class="col-sm-7 fw-bold"
+                                    th:text="${'₡' + #numbers.formatDecimal(saldo, 1, 'COMMA', 2, 'POINT')}"></dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-7">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">Registrar pago</h5>
+
+                            <div th:if="${membresia.estado == 'VENCIDA'}" class="alert alert-secondary">
+                                La membresía está vencida; no admite pagos.
+                            </div>
+
+                            <div th:if="${membresia.estado != 'VENCIDA' and saldo.signum() <= 0}"
+                                 class="alert alert-success">
+                                La membresía está pagada por completo.
+                            </div>
+
+                            <form th:if="${membresia.estado != 'VENCIDA' and saldo.signum() > 0}"
+                                  th:action="@{/pago/guardar}" method="post">
+
+                                <input type="hidden" name="idMembresia" th:value="${membresia.idMembresia}">
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Monto (₡) *</label>
+                                        <input type="number" name="monto" class="form-control"
+                                               min="0.01" step="0.01" th:max="${saldo}"
+                                               th:value="${saldo}" required>
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Método de pago *</label>
+                                        <select name="metodoPago" class="form-select" required>
+                                            <option value="">Seleccione</option>
+                                            <option th:each="metodo : ${metodosPago}"
+                                                    th:value="${metodo}" th:text="${metodo}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Referencia</label>
+                                    <input type="text" name="referencia" class="form-control"
+                                           maxlength="50" placeholder="Número de comprobante o SINPE">
+                                </div>
+
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary">
+                                        Registrar pago
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mt-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Pagos registrados</h5>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Monto</th>
+                                    <th>Método</th>
+                                    <th>Referencia</th>
+                                    <th>Registrado por</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="pago : ${pagos}">
+                                    <td th:text="${#temporals.format(pago.fechaPago, 'dd/MM/yyyy HH:mm')}"></td>
+                                    <td th:text="${'₡' + #numbers.formatDecimal(pago.monto, 1, 'COMMA', 2, 'POINT')}"></td>
+                                    <td th:text="${pago.metodoPago}"></td>
+                                    <td th:text="${pago.referencia}"></td>
+                                    <td th:text="${pago.usuarioRegistro.username}"></td>
+                                </tr>
+
+                                <tr th:if="${#lists.isEmpty(pagos)}">
+                                    <td colspan="5" class="text-center text-muted">
+                                        Todavía no hay pagos para esta membresía.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </body>
+</html>

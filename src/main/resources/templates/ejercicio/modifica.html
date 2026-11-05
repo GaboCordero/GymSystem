@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragmentos/menu :: head('Ejercicio')}"></head>
+    <body class="bg-light">
+
+        <nav th:replace="~{fragmentos/menu :: menuEntrenador}"></nav>
+
+        <main class="container py-5">
+
+            <div class="card shadow-sm mx-auto" style="max-width: 700px;">
+                <div class="card-body p-4">
+
+                    <h3 class="mb-3"
+                        th:text="${ejercicio.idEjercicio == null} ? 'Registrar ejercicio' : 'Editar ejercicio'">
+                    </h3>
+
+                    <div th:replace="~{fragmentos/menu :: mensajes}"></div>
+
+                    <form th:action="@{/ejercicio/guardar}" th:object="${ejercicio}" method="post">
+
+                        <input type="hidden" th:field="*{idEjercicio}">
+
+                        <div class="mb-3">
+                            <label class="form-label">Nombre *</label>
+                            <input type="text" th:field="*{nombre}" class="form-control"
+                                   maxlength="100" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Grupo muscular *</label>
+                            <input type="text" th:field="*{grupoMuscular}" class="form-control"
+                                   maxlength="50" list="gruposMusculares" required>
+                            <datalist id="gruposMusculares">
+                                <option value="Pecho"></option>
+                                <option value="Espalda"></option>
+                                <option value="Piernas"></option>
+                                <option value="Hombros"></option>
+                                <option value="Brazos"></option>
+                                <option value="Abdomen"></option>
+                                <option value="Cardio"></option>
+                            </datalist>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Descripción</label>
+                            <textarea th:field="*{descripcion}" class="form-control"
+                                      rows="3" maxlength="255"></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a th:href="@{/ejercicio/listado}" class="btn btn-secondary">
+                                Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                Guardar
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </main>
+    </body>
+</html>

@@ -17,6 +17,9 @@ public class SecurityConfig {
                         .requestMatchers("/empresa/**").hasRole("SUPERADMIN")
                         .requestMatchers("/usuario/**").hasAnyRole("SUPERADMIN", "ADMIN")
                         .requestMatchers("/cliente/**").hasRole("ADMIN")
+                        .requestMatchers("/plan/**", "/membresia/**", "/pago/**").hasRole("ADMIN")
+                        .requestMatchers("/ejercicio/**", "/rutina/**", "/asignacion/**").hasRole("ENTRENADOR")
+                        .requestMatchers("/mi-rutina").hasRole("CLIENTE")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

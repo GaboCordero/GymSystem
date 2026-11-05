@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragmentos/menu :: head('Ejercicios')}"></head>
+    <body class="bg-light">
+
+        <nav th:replace="~{fragmentos/menu :: menuEntrenador}"></nav>
+
+        <main class="container py-5">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">Catálogo de ejercicios</h2>
+
+                <a th:href="@{/ejercicio/nuevo}" class="btn btn-primary">
+                    Registrar ejercicio
+                </a>
+            </div>
+
+            <div th:replace="~{fragmentos/menu :: mensajes}"></div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Grupo muscular</th>
+                                    <th>Descripción</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="ejercicio : ${ejercicios}">
+                                    <td th:text="${ejercicio.nombre}"></td>
+                                    <td th:text="${ejercicio.grupoMuscular}"></td>
+                                    <td th:text="${ejercicio.descripcion}"></td>
+                                    <td>
+                                        <span th:if="${ejercicio.activo}" class="badge bg-success">Activo</span>
+                                        <span th:unless="${ejercicio.activo}" class="badge bg-secondary">Inactivo</span>
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/ejercicio/modificar/{id}(id=${ejercicio.idEjercicio})}"
+                                           class="btn btn-outline-primary btn-sm">
+                                            Editar
+                                        </a>
+
+                                        <form th:action="@{/ejercicio/estado/{id}(id=${ejercicio.idEjercicio})}"
+                                              method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-sm"
+                                                    th:classappend="${ejercicio.activo} ? 'btn-outline-danger' : 'btn-outline-success'"
+                                                    th:text="${ejercicio.activo} ? 'Desactivar' : 'Activar'">
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+
+                                <tr th:if="${#lists.isEmpty(ejercicios)}">
+                                    <td colspan="5" class="text-center text-muted">
+                                        No hay ejercicios registrados.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </body>
+</html>

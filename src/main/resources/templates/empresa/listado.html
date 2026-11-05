@@ -23,9 +23,16 @@
         <main class="container py-5">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2>Gestión de empresas</h2>
-                <a th:href="@{/empresa/nuevo}" class="btn btn-primary">
-                    Registrar empresa
-                </a>
+
+                <div class="d-flex gap-2">
+                    <a th:href="@{/empresa/nuevo}" class="btn btn-primary">
+                        Registrar empresa
+                    </a>
+
+                    <a th:href="@{/usuario/listado}" class="btn btn-outline-primary">
+                        Gestión de usuarios
+                    </a>
+                </div>
             </div>
 
             <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>

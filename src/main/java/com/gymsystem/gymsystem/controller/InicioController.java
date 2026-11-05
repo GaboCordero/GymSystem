@@ -24,6 +24,20 @@ public class InicioController {
             return "redirect:/usuario/listado";
         }
 
+        boolean entrenador = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ENTRENADOR"));
+
+        boolean cliente = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_CLIENTE"));
+
+        if (entrenador) {
+            return "redirect:/rutina/listado";
+        }
+
+        if (cliente) {
+            return "redirect:/mi-rutina";
+        }
+
         return "redirect:/inicio";
     }
 
