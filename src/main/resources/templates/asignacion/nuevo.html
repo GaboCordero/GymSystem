@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragmentos/menu :: head('Asignar rutina')}"></head>
+    <body class="bg-light">
+
+        <nav th:replace="~{fragmentos/menu :: menuEntrenador}"></nav>
+
+        <main class="container py-5">
+
+            <div class="card shadow-sm mx-auto" style="max-width: 700px;">
+                <div class="card-body p-4">
+
+                    <h3 class="mb-3">Asignar rutina a un cliente</h3>
+
+                    <p class="text-muted">
+                        Si el cliente ya tenía una rutina, esa queda en el historial y
+                        la nueva pasa a ser su rutina actual.
+                    </p>
+
+                    <div th:replace="~{fragmentos/menu :: mensajes}"></div>
+
+                    <div th:if="${#lists.isEmpty(clientes)}" class="alert alert-warning">
+                        No hay clientes activos en el gimnasio.
+                    </div>
+
+                    <div th:if="${#lists.isEmpty(rutinas)}" class="alert alert-warning">
+                        No hay rutinas activas. Primero cree una rutina.
+                    </div>
+
+                    <form th:action="@{/asignacion/guardar}" method="post">
+
+                        <div class="mb-3">
+                            <label class="form-label">Cliente *</label>
+                            <select name="idCliente" class="form-select" required>
+                                <option value="">Seleccione un cliente</option>
+                                <option th:each="cliente : ${clientes}"
+                                        th:value="${cliente.idCliente}"
+                                        th:text="${cliente.usuario.nombre + ' ' + cliente.usuario.apellidos + ' (' + cliente.usuario.username + ')'}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Rutina *</label>
+                            <select name="idRutina" class="form-select" required>
+                                <option value="">Seleccione una rutina</option>
+                                <option th:each="rutina : ${rutinas}"
+                                        th:value="${rutina.idRutina}"
+                                        th:selected="${rutina.idRutina == idRutinaSeleccionada}"
+                                        th:text="${rutina.nombre}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Observaciones</label>
+                            <textarea name="observaciones" class="form-control"
+                                      rows="3" maxlength="255"
+                                      placeholder="Indicaciones personalizadas para este cliente"></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a th:href="@{/asignacion/listado}" class="btn btn-secondary">
+                                Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary"
+                                    th:disabled="${#lists.isEmpty(clientes) or #lists.isEmpty(rutinas)}">
+                                Asignar rutina
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </main>
+    </body>
+</html>

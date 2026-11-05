@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragmentos/menu :: head('Rutinas')}"></head>
+    <body class="bg-light">
+
+        <nav th:replace="~{fragmentos/menu :: menuEntrenador}"></nav>
+
+        <main class="container py-5">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">Rutinas de entrenamiento</h2>
+
+                <div class="d-flex gap-2">
+                    <a th:href="@{/rutina/nuevo}" class="btn btn-primary">
+                        Crear rutina
+                    </a>
+                    <a th:href="@{/asignacion/nuevo}" class="btn btn-outline-primary">
+                        Asignar rutina a cliente
+                    </a>
+                </div>
+            </div>
+
+            <div th:replace="~{fragmentos/menu :: mensajes}"></div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Objetivo</th>
+                                    <th>Descripción</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="rutina : ${rutinas}">
+                                    <td th:text="${rutina.nombre}"></td>
+                                    <td th:text="${rutina.objetivo}"></td>
+                                    <td th:text="${rutina.descripcion}"></td>
+                                    <td>
+                                        <span th:if="${rutina.activo}" class="badge bg-success">Activa</span>
+                                        <span th:unless="${rutina.activo}" class="badge bg-secondary">Inactiva</span>
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/rutina/detalle/{id}(id=${rutina.idRutina})}"
+                                           class="btn btn-outline-primary btn-sm">
+                                            Ejercicios
+                                        </a>
+
+                                        <a th:href="@{/rutina/modificar/{id}(id=${rutina.idRutina})}"
+                                           class="btn btn-outline-secondary btn-sm">
+                                            Editar
+                                        </a>
+
+                                        <form th:action="@{/rutina/estado/{id}(id=${rutina.idRutina})}"
+                                              method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-sm"
+                                                    th:classappend="${rutina.activo} ? 'btn-outline-danger' : 'btn-outline-success'"
+                                                    th:text="${rutina.activo} ? 'Desactivar' : 'Activar'">
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+
+                                <tr th:if="${#lists.isEmpty(rutinas)}">
+                                    <td colspan="5" class="text-center text-muted">
+                                        No hay rutinas registradas.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </body>
+</html>

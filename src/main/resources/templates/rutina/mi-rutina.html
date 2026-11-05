@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragmentos/menu :: head('Mi rutina')}"></head>
+    <body class="bg-light">
+
+        <nav th:replace="~{fragmentos/menu :: menuCliente}"></nav>
+
+        <main class="container py-5">
+
+            <h2 class="mb-4">Mi rutina de entrenamiento</h2>
+
+            <div th:if="${asignacion == null}" class="alert alert-info">
+                Todavía no tiene una rutina asignada. Consulte con su entrenador.
+            </div>
+
+            <div th:if="${asignacion != null}">
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h4 class="card-title" th:text="${asignacion.rutina.nombre}"></h4>
+
+                        <p class="mb-1" th:if="${not #strings.isEmpty(asignacion.rutina.objetivo)}">
+                            <strong>Objetivo:</strong>
+                            <span th:text="${asignacion.rutina.objetivo}"></span>
+                        </p>
+
+                        <p class="mb-1" th:if="${not #strings.isEmpty(asignacion.rutina.descripcion)}"
+                           th:text="${asignacion.rutina.descripcion}"></p>
+
+                        <p class="mb-1">
+                            <strong>Asignada por:</strong>
+                            <span th:text="${asignacion.entrenador.nombre + ' ' + asignacion.entrenador.apellidos}"></span>
+                            el
+                            <span th:text="${#temporals.format(asignacion.fechaAsignacion, 'dd/MM/yyyy')}"></span>
+                        </p>
+
+                        <div th:if="${not #strings.isEmpty(asignacion.observaciones)}" class="alert alert-light border mt-3 mb-0">
+                            <strong>Indicaciones del entrenador:</strong>
+                            <span th:text="${asignacion.observaciones}"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Ejercicios</h5>
+
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Ejercicio</th>
+                                        <th>Grupo muscular</th>
+                                        <th>Series</th>
+                                        <th>Repeticiones</th>
+                                        <th>Descanso</th>
+                                        <th>Indicaciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="detalle : ${detalles}">
+                                        <td th:text="${detalle.orden}"></td>
+                                        <td>
+                                            <span th:text="${detalle.ejercicio.nombre}"></span>
+                                            <div class="small text-muted"
+                                                 th:text="${detalle.ejercicio.descripcion}"></div>
+                                        </td>
+                                        <td th:text="${detalle.ejercicio.grupoMuscular}"></td>
+                                        <td th:text="${detalle.series}"></td>
+                                        <td th:text="${detalle.repeticiones}"></td>
+                                        <td th:text="${detalle.descansoSegundos != null} ? ${detalle.descansoSegundos + ' s'} : '-'"></td>
+                                        <td th:text="${detalle.indicaciones}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </body>
+</html>

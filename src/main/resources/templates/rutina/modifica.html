@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragmentos/menu :: head('Rutina')}"></head>
+    <body class="bg-light">
+
+        <nav th:replace="~{fragmentos/menu :: menuEntrenador}"></nav>
+
+        <main class="container py-5">
+
+            <div class="card shadow-sm mx-auto" style="max-width: 700px;">
+                <div class="card-body p-4">
+
+                    <h3 class="mb-3"
+                        th:text="${rutina.idRutina == null} ? 'Crear rutina' : 'Editar rutina'">
+                    </h3>
+
+                    <p class="text-muted" th:if="${rutina.idRutina == null}">
+                        Después de guardar podrá agregar los ejercicios de la rutina.
+                    </p>
+
+                    <div th:replace="~{fragmentos/menu :: mensajes}"></div>
+
+                    <form th:action="@{/rutina/guardar}" th:object="${rutina}" method="post">
+
+                        <input type="hidden" th:field="*{idRutina}">
+
+                        <div class="mb-3">
+                            <label class="form-label">Nombre *</label>
+                            <input type="text" th:field="*{nombre}" class="form-control"
+                                   maxlength="100" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Objetivo</label>
+                            <input type="text" th:field="*{objetivo}" class="form-control"
+                                   maxlength="100" placeholder="Ejemplo: Hipertrofia, resistencia">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Descripción</label>
+                            <textarea th:field="*{descripcion}" class="form-control"
+                                      rows="3" maxlength="255"></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a th:href="@{/rutina/listado}" class="btn btn-secondary">
+                                Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                Guardar
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </main>
+    </body>
+</html>

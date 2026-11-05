@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragmentos/menu :: head('Ejercicios de la rutina')}"></head>
+    <body class="bg-light">
+
+        <nav th:replace="~{fragmentos/menu :: menuEntrenador}"></nav>
+
+        <main class="container py-5">
+
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h2 class="mb-0" th:text="${rutina.nombre}"></h2>
+
+                <div class="d-flex gap-2">
+                    <a th:href="@{/asignacion/nuevo(idRutina=${rutina.idRutina})}"
+                       class="btn btn-outline-primary">
+                        Asignar a cliente
+                    </a>
+                    <a th:href="@{/rutina/listado}" class="btn btn-outline-secondary">
+                        Volver a rutinas
+                    </a>
+                </div>
+            </div>
+
+            <p class="text-muted mb-4" th:text="${rutina.objetivo}"></p>
+
+            <div th:replace="~{fragmentos/menu :: mensajes}"></div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Ejercicios</h5>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Ejercicio</th>
+                                    <th>Grupo muscular</th>
+                                    <th>Series</th>
+                                    <th>Repeticiones</th>
+                                    <th>Descanso</th>
+                                    <th>Indicaciones</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="detalle : ${detalles}">
+                                    <td th:text="${detalle.orden}"></td>
+                                    <td th:text="${detalle.ejercicio.nombre}"></td>
+                                    <td th:text="${detalle.ejercicio.grupoMuscular}"></td>
+                                    <td th:text="${detalle.series}"></td>
+                                    <td th:text="${detalle.repeticiones}"></td>
+                                    <td th:text="${detalle.descansoSegundos != null} ? ${detalle.descansoSegundos + ' s'} : '-'"></td>
+                                    <td th:text="${detalle.indicaciones}"></td>
+                                    <td>
+                                        <form th:action="@{/rutina/ejercicio/quitar/{id}(id=${detalle.idRutinaEjercicio})}"
+                                              method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                Quitar
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+
+                                <tr th:if="${#lists.isEmpty(detalles)}">
+                                    <td colspan="8" class="text-center text-muted">
+                                        La rutina todavía no tiene ejercicios.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Agregar ejercicio</h5>
+
+                    <div th:if="${#lists.isEmpty(ejercicios)}" class="alert alert-warning">
+                        No hay ejercicios activos. Primero registre ejercicios en el catálogo.
+                    </div>
+
+                    <form th:action="@{/rutina/ejercicio/agregar}" method="post">
+
+                        <input type="hidden" name="idRutina" th:value="${rutina.idRutina}">
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Ejercicio *</label>
+                                <select name="idEjercicio" class="form-select" required>
+                                    <option value="">Seleccione</option>
+                                    <option th:each="ejercicio : ${ejercicios}"
+                                            th:value="${ejercicio.idEjercicio}"
+                                            th:text="${ejercicio.nombre + ' (' + ejercicio.grupoMuscular + ')'}">
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-2 mb-3">
+                                <label class="form-label">Series *</label>
+                                <input type="number" name="series" class="form-control"
+                                       min="1" max="20" value="3" required>
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Repeticiones *</label>
+                                <input type="text" name="repeticiones" class="form-control"
+                                       maxlength="20" placeholder="12 o 10-12" required>
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Descanso (segundos)</label>
+                                <input type="number" name="descansoSegundos" class="form-control"
+                                       min="0" max="600" value="60">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Indicaciones</label>
+                            <input type="text" name="indicaciones" class="form-control"
+                                   maxlength="255" placeholder="Técnica, peso sugerido, etc.">
+                        </div>
+
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary"
+                                    th:disabled="${#lists.isEmpty(ejercicios)}">
+                                Agregar a la rutina
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </main>
+    </body>
+</html>

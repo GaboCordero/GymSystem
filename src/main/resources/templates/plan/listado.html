@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragmentos/menu :: head('Planes de membresía')}"></head>
+    <body class="bg-light">
+
+        <nav th:replace="~{fragmentos/menu :: menuAdmin}"></nav>
+
+        <main class="container py-5">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">Planes de membresía</h2>
+
+                <a th:href="@{/plan/nuevo}" class="btn btn-primary">
+                    Registrar plan
+                </a>
+            </div>
+
+            <div th:replace="~{fragmentos/menu :: mensajes}"></div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Descripción</th>
+                                    <th>Duración</th>
+                                    <th>Precio</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="plan : ${planes}">
+                                    <td th:text="${plan.nombre}"></td>
+                                    <td th:text="${plan.descripcion}"></td>
+                                    <td th:text="${plan.duracionDias + ' días'}"></td>
+                                    <td th:text="${'₡' + #numbers.formatDecimal(plan.precio, 1, 'COMMA', 2, 'POINT')}"></td>
+                                    <td>
+                                        <span th:if="${plan.activo}" class="badge bg-success">Activo</span>
+                                        <span th:unless="${plan.activo}" class="badge bg-secondary">Inactivo</span>
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/plan/modificar/{id}(id=${plan.idPlan})}"
+                                           class="btn btn-outline-primary btn-sm">
+                                            Editar
+                                        </a>
+
+                                        <form th:action="@{/plan/estado/{id}(id=${plan.idPlan})}"
+                                              method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-sm"
+                                                    th:classappend="${plan.activo} ? 'btn-outline-danger' : 'btn-outline-success'"
+                                                    th:text="${plan.activo} ? 'Desactivar' : 'Activar'">
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+
+                                <tr th:if="${#lists.isEmpty(planes)}">
+                                    <td colspan="6" class="text-center text-muted">
+                                        No hay planes de membresía registrados.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </body>
+</html>

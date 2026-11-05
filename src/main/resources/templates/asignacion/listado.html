@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragmentos/menu :: head('Asignaciones de rutinas')}"></head>
+    <body class="bg-light">
+
+        <nav th:replace="~{fragmentos/menu :: menuEntrenador}"></nav>
+
+        <main class="container py-5">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">Rutinas asignadas a clientes</h2>
+
+                <a th:href="@{/asignacion/nuevo}" class="btn btn-primary">
+                    Asignar rutina
+                </a>
+            </div>
+
+            <div th:replace="~{fragmentos/menu :: mensajes}"></div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Rutina</th>
+                                    <th>Asignada por</th>
+                                    <th>Fecha</th>
+                                    <th>Observaciones</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="asignacion : ${asignaciones}">
+                                    <td th:text="${asignacion.cliente.usuario.nombre + ' ' + asignacion.cliente.usuario.apellidos}"></td>
+                                    <td th:text="${asignacion.rutina.nombre}"></td>
+                                    <td th:text="${asignacion.entrenador.nombre + ' ' + asignacion.entrenador.apellidos}"></td>
+                                    <td th:text="${#temporals.format(asignacion.fechaAsignacion, 'dd/MM/yyyy')}"></td>
+                                    <td th:text="${asignacion.observaciones}"></td>
+                                    <td>
+                                        <span th:if="${asignacion.activa}" class="badge bg-success">Actual</span>
+                                        <span th:unless="${asignacion.activa}" class="badge bg-secondary">Historial</span>
+                                    </td>
+                                </tr>
+
+                                <tr th:if="${#lists.isEmpty(asignaciones)}">
+                                    <td colspan="6" class="text-center text-muted">
+                                        No hay rutinas asignadas.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </body>
+</html>

@@ -72,3 +72,120 @@ INSERT IGNORE INTO rol (rol) VALUES
 ('ADMIN'),
 ('ENTRENADOR'),
 ('CLIENTE');
+
+CREATE TABLE IF NOT EXISTS plan_membresia (
+    id_plan INT NOT NULL AUTO_INCREMENT,
+    id_empresa INT NOT NULL,
+    nombre VARCHAR(50) NOT NULL,
+    descripcion VARCHAR(255),
+    duracion_dias INT NOT NULL,
+    precio DECIMAL(10,2) NOT NULL,
+    activo BOOLEAN DEFAULT TRUE,
+    PRIMARY KEY (id_plan),
+    UNIQUE KEY uk_plan_empresa_nombre (id_empresa, nombre),
+    CONSTRAINT fk_plan_empresa
+        FOREIGN KEY (id_empresa)
+        REFERENCES empresa(id_empresa)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS membresia (
+    id_membresia INT NOT NULL AUTO_INCREMENT,
+    id_cliente INT NOT NULL,
+    id_plan INT NOT NULL,
+    fecha_inicio DATE NOT NULL,
+    fecha_fin DATE NOT NULL,
+    precio DECIMAL(10,2) NOT NULL,
+    estado VARCHAR(20) NOT NULL,
+    fecha_registro DATE NOT NULL,
+    PRIMARY KEY (id_membresia),
+    CONSTRAINT fk_membresia_cliente
+        FOREIGN KEY (id_cliente)
+        REFERENCES cliente(id_cliente),
+    CONSTRAINT fk_membresia_plan
+        FOREIGN KEY (id_plan)
+        REFERENCES plan_membresia(id_plan)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS pago (
+    id_pago INT NOT NULL AUTO_INCREMENT,
+    id_membresia INT NOT NULL,
+    id_usuario_registro INT NOT NULL,
+    fecha_pago DATETIME NOT NULL,
+    monto DECIMAL(10,2) NOT NULL,
+    metodo_pago VARCHAR(20) NOT NULL,
+    referencia VARCHAR(50),
+    PRIMARY KEY (id_pago),
+    CONSTRAINT fk_pago_membresia
+        FOREIGN KEY (id_membresia)
+        REFERENCES membresia(id_membresia),
+    CONSTRAINT fk_pago_usuario
+        FOREIGN KEY (id_usuario_registro)
+        REFERENCES usuario(id_usuario)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS ejercicio (
+    id_ejercicio INT NOT NULL AUTO_INCREMENT,
+    id_empresa INT NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    grupo_muscular VARCHAR(50) NOT NULL,
+    descripcion VARCHAR(255),
+    activo BOOLEAN DEFAULT TRUE,
+    PRIMARY KEY (id_ejercicio),
+    UNIQUE KEY uk_ejercicio_empresa_nombre (id_empresa, nombre),
+    CONSTRAINT fk_ejercicio_empresa
+        FOREIGN KEY (id_empresa)
+        REFERENCES empresa(id_empresa)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS rutina (
+    id_rutina INT NOT NULL AUTO_INCREMENT,
+    id_empresa INT NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    objetivo VARCHAR(100),
+    descripcion VARCHAR(255),
+    activo BOOLEAN DEFAULT TRUE,
+    PRIMARY KEY (id_rutina),
+    UNIQUE KEY uk_rutina_empresa_nombre (id_empresa, nombre),
+    CONSTRAINT fk_rutina_empresa
+        FOREIGN KEY (id_empresa)
+        REFERENCES empresa(id_empresa)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS rutina_ejercicio (
+    id_rutina_ejercicio INT NOT NULL AUTO_INCREMENT,
+    id_rutina INT NOT NULL,
+    id_ejercicio INT NOT NULL,
+    orden INT NOT NULL,
+    series INT NOT NULL,
+    repeticiones VARCHAR(20) NOT NULL,
+    descanso_segundos INT,
+    indicaciones VARCHAR(255),
+    PRIMARY KEY (id_rutina_ejercicio),
+    UNIQUE KEY uk_rutina_ejercicio (id_rutina, id_ejercicio),
+    CONSTRAINT fk_rutina_ejercicio_rutina
+        FOREIGN KEY (id_rutina)
+        REFERENCES rutina(id_rutina),
+    CONSTRAINT fk_rutina_ejercicio_ejercicio
+        FOREIGN KEY (id_ejercicio)
+        REFERENCES ejercicio(id_ejercicio)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS rutina_cliente (
+    id_rutina_cliente INT NOT NULL AUTO_INCREMENT,
+    id_rutina INT NOT NULL,
+    id_cliente INT NOT NULL,
+    id_entrenador INT NOT NULL,
+    fecha_asignacion DATE NOT NULL,
+    observaciones VARCHAR(255),
+    activa BOOLEAN DEFAULT TRUE,
+    PRIMARY KEY (id_rutina_cliente),
+    CONSTRAINT fk_rutina_cliente_rutina
+        FOREIGN KEY (id_rutina)
+        REFERENCES rutina(id_rutina),
+    CONSTRAINT fk_rutina_cliente_cliente
+        FOREIGN KEY (id_cliente)
+        REFERENCES cliente(id_cliente),
+    CONSTRAINT fk_rutina_cliente_entrenador
+        FOREIGN KEY (id_entrenador)
+        REFERENCES usuario(id_usuario)
+) ENGINE=InnoDB;

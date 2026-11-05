@@ -8,17 +8,7 @@
     </head>
     <body class="bg-light">
 
-        <nav class="navbar navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" th:href="@{/cliente/listado}">GymSystem</a>
-
-                <form th:action="@{/logout}" method="post">
-                    <button type="submit" class="btn btn-outline-light btn-sm">
-                        Cerrar sesión
-                    </button>
-                </form>
-            </div>
-        </nav>
+        <nav th:replace="~{fragmentos/menu :: menuAdmin}"></nav>
 
         <main class="container py-5">
 
