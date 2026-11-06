@@ -27,7 +27,6 @@ public class AdminInicialConfig {
 
             String username = System.getenv("GYMSYSTEM_ADMIN_USERNAME");
             String password = System.getenv("GYMSYSTEM_ADMIN_PASSWORD");
-
             if (username == null || username.isBlank()
                     || password == null || password.isBlank()) {
                 throw new IllegalStateException("Faltan las credenciales del superadministrador inicial");
