@@ -189,3 +189,17 @@ CREATE TABLE IF NOT EXISTS rutina_cliente (
         FOREIGN KEY (id_entrenador)
         REFERENCES usuario(id_usuario)
 ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS producto (
+    id_producto INT NOT NULL AUTO_INCREMENT,
+    id_empresa INT NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion VARCHAR(255),
+    precio DECIMAL(10,2) NOT NULL,
+    existencias INT NOT NULL DEFAULT 0,
+    activo BOOLEAN DEFAULT TRUE,
+    PRIMARY KEY (id_producto),
+    CONSTRAINT fk_producto_empresa
+        FOREIGN KEY (id_empresa)
+        REFERENCES empresa(id_empresa)
+) ENGINE=InnoDB;
