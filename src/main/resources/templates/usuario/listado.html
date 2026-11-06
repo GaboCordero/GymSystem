@@ -46,6 +46,12 @@
                         Membresías y pagos
                     </a>
 
+                    <a th:href="@{/venta/listado}" class="btn btn-outline-primary">Gestión de ventas</a>
+                    
+                    <a th:href="@{/producto/listado}" class="btn btn-outline-primary">
+                        Gestión de productos
+                    </a>
+                    
                     <a th:if="${superadmin}"
                        th:href="@{/empresa/listado}"
                        class="btn btn-outline-primary">

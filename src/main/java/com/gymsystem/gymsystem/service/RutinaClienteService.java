@@ -1,15 +1,18 @@
 package com.gymsystem.gymsystem.service;
 
 import com.gymsystem.gymsystem.domain.Cliente;
+import com.gymsystem.gymsystem.domain.Notificacion;
 import com.gymsystem.gymsystem.domain.Rutina;
 import com.gymsystem.gymsystem.domain.RutinaCliente;
 import com.gymsystem.gymsystem.domain.Usuario;
 import com.gymsystem.gymsystem.repository.ClienteRepository;
+import com.gymsystem.gymsystem.repository.NotificacionRepository;
 import com.gymsystem.gymsystem.repository.RutinaClienteRepository;
 import com.gymsystem.gymsystem.repository.RutinaEjercicioRepository;
 import com.gymsystem.gymsystem.repository.RutinaRepository;
 import com.gymsystem.gymsystem.repository.UsuarioRepository;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,6 +28,7 @@ public class RutinaClienteService {
     private final ClienteRepository clienteRepository;
     private final UsuarioRepository usuarioRepository;
     private final SesionService sesionService;
+    private final NotificacionRepository notificacionRepository;
 
     @Transactional(readOnly = true)
     public List<RutinaCliente> getAsignaciones(String usernameActual) {
@@ -102,6 +106,14 @@ public class RutinaClienteService {
         asignacion.setActiva(true);
 
         rutinaClienteRepository.save(asignacion);
+        Notificacion notificacion = new Notificacion();
+        notificacion.setIdUsuario(cliente.getUsuario().getIdUsuario());
+        notificacion.setTipo("NUEVA_RUTINA");
+        notificacion.setMensaje("Se te ha asignado una nueva rutina de entrenamiento.");
+        notificacion.setFecha(LocalDateTime.now());
+        notificacion.setLeida(false);
+
+        notificacionRepository.save(notificacion);
     }
 
     @Transactional(readOnly = true)

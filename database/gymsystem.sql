@@ -189,3 +189,46 @@ CREATE TABLE IF NOT EXISTS rutina_cliente (
         FOREIGN KEY (id_entrenador)
         REFERENCES usuario(id_usuario)
 ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS producto (
+    id_producto INT NOT NULL AUTO_INCREMENT,
+    id_empresa INT NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion VARCHAR(255),
+    precio DECIMAL(10,2) NOT NULL,
+    existencias INT NOT NULL DEFAULT 0,
+    activo BOOLEAN DEFAULT TRUE,
+    PRIMARY KEY (id_producto),
+    CONSTRAINT fk_producto_empresa
+        FOREIGN KEY (id_empresa)
+        REFERENCES empresa(id_empresa)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS venta (
+    id_venta INT AUTO_INCREMENT PRIMARY KEY,
+    id_empresa INT NOT NULL,
+    id_usuario INT NOT NULL,
+    id_cliente INT NULL,
+    fecha DATETIME NOT NULL,
+    total DOUBLE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS detalle_venta (
+    id_detalle_venta INT AUTO_INCREMENT PRIMARY KEY,
+    id_venta INT NOT NULL,
+    id_producto INT NOT NULL,
+    cantidad INT NOT NULL,
+    precio_unitario DOUBLE NOT NULL,
+    subtotal DOUBLE NOT NULL,
+    CONSTRAINT fk_detalle_venta FOREIGN KEY (id_venta) REFERENCES venta(id_venta) ON DELETE CASCADE,
+    CONSTRAINT fk_detalle_producto FOREIGN KEY (id_producto) REFERENCES producto(id_producto)
+);
+
+CREATE TABLE IF NOT EXISTS notificacion (
+    id_notificacion INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    tipo VARCHAR(50) NOT NULL,
+    mensaje TEXT NOT NULL,
+    fecha DATETIME NOT NULL,
+    leida BOOLEAN DEFAULT FALSE
+);
